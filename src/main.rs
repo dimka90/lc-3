@@ -17,6 +17,7 @@ enum Registers {
 }
 
 #[derive(Debug)]
+#[repr(u16)]
 enum Opcodes {
     BR,
     ADD,  /* add  */
@@ -68,7 +69,30 @@ trait MemoryTrait {
     fn new() -> Self;
     fn mem_read(&self, register: &mut Register) -> Option<u16>;
 }
+impl Opcodes{
+    fn to_u16(op:u16)->Option<Opcodes>{
+        match op {
+            0=>Some(Opcodes::BR),
+            1=>Some(Opcodes::ADD),
+            2=>Some(Opcodes::LD),
+            3=>Some(Opcodes::ST),
+            4=>Some(Opcodes::JSR),
+            5=>Some(Opcodes::AND),
+            6=>Some(Opcodes::LDR),
+            7=>Some(Opcodes::STR),
+            8=>Some(Opcodes::RTI),
+            9=>Some(Opcodes::NOT),
+            10=>Some(Opcodes::LDI),
+            11=>Some(Opcodes::STI),
+            12=>Some(Opcodes::JMP),
+            13=>Some(Opcodes::RES),
+            14=>Some(Opcodes::LEA),
+            15=>Some(Opcodes::TRAP),
+            _=>None
 
+        }
+    }
+}
 impl RegisterTrait for Register {
     fn new() -> Self {
         Self {
@@ -99,7 +123,10 @@ impl MemoryTrait for Memory {
         Some(self.locations[mem_addr as usize])
     }
 }
-
+fn convert_opcode(opcode:Opcodes)->u16{
+     opcode as u16
+}
+const OPCODE_ADD:u16=Opcodes::ADD as u16;
 fn main() {
     let mut memory = Memory::new();
     let mut register = Register::new();
@@ -117,10 +144,24 @@ fn main() {
      println!("instruction {instr:#01x}");
     
 
-    match opcode {
-        1 => println!("Addition Operation"),
-        2 => println!("AND operation"),
-        3 => println!("NOT operation"),
+    match Opcodes::to_u16(opcode) {
+        Some(Opcodes::ADD)  => println!("Print Addition Operation"),
+        Some(Opcodes::AND) => println!("AND Operation"),
+        Some(Opcodes::NOT) => println!("NOT operation"),
+        Some(Opcodes::BR)  => println!("BR operation"),
+        Some(Opcodes::JMP)  => println!("JMP operation"),
+        Some(Opcodes::JSR)  => println!("JSR operation"),
+        Some(Opcodes::LD)  => println!("LD operation"),
+        Some(Opcodes::LDI)  => println!("LDI operation"),
+        Some(Opcodes::LDR)  => println!("LDR operation"),
+        Some(Opcodes::LEA)  => println!("LEA operation"),
+        Some(Opcodes::ST)  => println!("ST operation"),
+        Some(Opcodes::STI)  => println!("STI operation"),
+        Some(Opcodes::STR)  => println!("STR operation"),
+        Some(Opcodes::TRAP)  => println!("TRAP operation"),
+        Some(Opcodes::RES)  => println!("RES operation"),
+        Some(Opcodes::RTI)  => println!("RTI operation"),
+
         _ => println!("Unknown.......")
     }
 }
